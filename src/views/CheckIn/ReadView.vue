@@ -1,9 +1,10 @@
 <script setup>
+import BarChart from '@/components/BarChart.vue'
+import LoaderComponent from '@/components/LoaderComponent.vue'
 import useUserStore from '@/stores/user'
 import axios from 'axios'
-import { reactive, onMounted, ref, watch } from 'vue'
+import { onMounted, reactive, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import LoaderComponent from '../../components/LoaderComponent.vue'
 
 const userStore = useUserStore()
 const route = useRoute()
@@ -14,27 +15,43 @@ const data = reactive({
   checkin: null,
   totals: null
 })
+const charts = reactive({
+  ratings: null,
+  symptoms: null,
+  activities: null
+})
 const state = reactive({
-  loading: true
+  loading: true,
+  showFilters: false,
+  page: 0,
+  pages: 0,
+  limit: 10,
+  showNextPage: true
 })
 
-onMounted(async () => {
-  data.user = await userStore.fetchUser()
+async function fetchData() {
   if (route.name === 'read-all-check-ins') {
     state.loading = true
     try {
-      const resp = await axios.get('/api/user/check-in', {
-        headers: {
-          Authorization: userStore.getToken
+      const resp = await axios.get(
+        `/api/user/check-in?page=${state.page}&limit=${state.limit}`,
+        {
+          headers: {
+            Authorization: userStore.getToken
+          }
         }
-      })
+      )
       if (!!resp.data) {
         data.checkins = resp.data.check_ins
         data.totals = resp.data.totals
+        state.page = resp.data.page
+        state.pages = resp.data.pages
+        state.showNextPage = resp.data.has_next
       }
     } catch (error) {
       console.log(error)
     } finally {
+      data.checkins.reverse()
       state.loading = false
     }
   } else if (route.name === 'read-check-in') {
@@ -52,45 +69,142 @@ onMounted(async () => {
       console.log(error)
     } finally {
       state.loading = false
+    }
+  }
+}
+
+onMounted(async () => {
+  data.user = await userStore.fetchUser()
+  await fetchData()
+
+  // create bar chart
+  charts.barConfig = {
+    data: {
+      labels: ['Very Bad', 'Bad', 'Neutral', 'Good', 'Very Good'],
+      datasets: [
+        {
+          backgroundColor: [
+            '#818CF8',
+            '#C084FC',
+            '#FBBF24',
+            '#22D3EE',
+            '#22C55E'
+          ],
+          data: [
+            data.totals.very_bad,
+            data.totals.bad,
+            data.totals.neutral,
+            data.totals.good,
+            data.totals.very_good
+          ]
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            color: '#6b7280'
+          },
+          ticks: {
+            color: document.documentElement.classList.contains('dark')
+              ? '#d4d4d8'
+              : '#374151'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: '#6b7280'
+          },
+          ticks: {
+            stepSize: 1,
+            color: document.documentElement.classList.contains('dark')
+              ? '#d4d4d8'
+              : '#374151'
+          }
+        }
+      }
     }
   }
 })
 watch(route, async () => {
-  if (route.name === 'read-all-check-ins') {
-    state.loading = true
-    try {
-      const resp = await axios.get('/api/user/check-in', {
-        headers: {
-          Authorization: userStore.getToken
+  await fetchData()
+  // create bar chart
+  charts.barConfig = {
+    data: {
+      labels: ['Very Bad', 'Bad', 'Neutral', 'Good', 'Very Good'],
+      datasets: [
+        {
+          backgroundColor: [
+            '#818CF8',
+            '#C084FC',
+            '#FBBF24',
+            '#22D3EE',
+            '#22C55E'
+          ],
+          data: [
+            data.totals.very_bad,
+            data.totals.bad,
+            data.totals.neutral,
+            data.totals.good,
+            data.totals.very_good
+          ]
         }
-      })
-      if (!!resp.data) {
-        data.checkins = resp.data.check_ins
-        data.totals = resp.data.totals
-      }
-    } catch (error) {
-      console.log(error)
-    } finally {
-      state.loading = false
-    }
-  } else if (route.name === 'read-check-in') {
-    state.loading = true
-    try {
-      const resp = await axios.get(`/api/user/check-in/${route.params.id}`, {
-        headers: {
-          Authorization: userStore.getToken
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
         }
-      })
-      if (!!resp.data) {
-        data.checkin = resp.data
+      },
+      scales: {
+        x: {
+          grid: {
+            color: '#6b7280'
+          },
+          ticks: {
+            color: document.documentElement.classList.contains('dark')
+              ? '#d4d4d8'
+              : '#374151'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: '#6b7280'
+          },
+          ticks: {
+            stepSize: 1,
+            color: document.documentElement.classList.contains('dark')
+              ? '#d4d4d8'
+              : '#374151'
+          }
+        }
       }
-    } catch (error) {
-      console.log(error)
-    } finally {
-      state.loading = false
     }
   }
 })
+
+function nextPage() {
+  state.page += 1
+  fetchData()
+}
+
+function prevPage() {
+  state.page -= 1
+  fetchData()
+}
 </script>
 
 <template>
@@ -99,76 +213,177 @@ watch(route, async () => {
       <h2 class="text-3xl font-black text-gray-800 mb-6 dark:text-white">
         Your Check-Ins
       </h2>
-      <select
-        class="bg-white border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-52 p-2.5 dark:bg-gray-800 dark:border-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      <button
+        type="button"
+        class="py-2.5 px-5 inline-flex items-center text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
       >
-        <option selected>Choose a filter</option>
-        <option value="US">Everything</option>
-        <option value="CA">This month</option>
-        <option value="FR">Previous month</option>
-        <option value="DE">Previous 3 months</option>
-        <option value="DE">Previous 6 months</option>
-        <option value="DE">This year</option>
-      </select>
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-4 h-4 mr-4"
+        >
+          <polygon
+            points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"
+          ></polygon>
+        </svg>
+        Filters
+      </button>
     </div>
 
     <LoaderComponent v-if="state.loading" />
     <div v-else>
-      <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
-        Overview
-      </h4>
-      <div
-        class="mb-12 rounded-lg shadow border border-gray-300 dark:border-gray-700"
-      >
+      <div class="grid gird-cols-1 md:grid-cols-2 gap-6 md:gap-12 mb-12">
+        <!-- Bar chart -->
         <div
-          class="grid grid-cols-5 gap-2.5 p-2.5 divide-x divide-gray-400 dark:divide-gray-600"
+          class="relative h-full flex flex-col p-4 gap-4 shadow-lg bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
         >
-          <div class="flex items-center justify-center">
-            <img src="@/assets/Icons/Face1.svg" class="w-12 h-12" />
-            <span class="ml-2 text-xl font-bold text-gray-800 dark:text-white">
-              {{ data.totals?.very_bad }}
-            </span>
-          </div>
-          <div class="flex items-center justify-center">
-            <img src="@/assets/Icons/Face2.svg" class="w-12 h-12" />
-            <span class="ml-2 text-xl font-bold text-gray-800 dark:text-white">
-              {{ data.totals?.bad }}
-            </span>
-          </div>
-          <div class="flex items-center justify-center">
-            <img src="@/assets/Icons/Face3.svg" class="w-12 h-12" />
-            <span class="ml-2 text-xl font-bold text-gray-800 dark:text-white">
-              {{ data.totals?.neutral }}
-            </span>
-          </div>
-          <div class="flex items-center justify-center">
-            <img src="@/assets/Icons/Face4.svg" class="w-12 h-12" />
-            <span class="ml-2 text-xl font-bold text-gray-800 dark:text-white">
-              {{ data.totals?.good }}
-            </span>
-          </div>
-          <div class="flex items-center justify-center">
-            <img src="@/assets/Icons/Face5.svg" class="w-12 h-12" />
-            <span class="ml-2 text-xl font-bold text-gray-800 dark:text-white">
-              {{ data.totals?.very_good }}
-            </span>
+          <h4 class="text-xl font-bold text-gray-800 dark:text-white">
+            Check In's by Rating
+          </h4>
+          <BarChart
+            v-if="!!charts.barConfig"
+            :chart-data="charts.barConfig.data"
+            :chart-options="charts.barConfig.options"
+          />
+        </div>
+        <!-- Totals -->
+        <div
+          class="relative h-full flex flex-col p-6 gap-6 shadow-lg bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
+        >
+          <div
+            class="flex flex-col gap-4 p-4 divide-y divide-gray-400 dark:divide-gray-600"
+          >
+            <div class="flex items-center justify-around">
+              <img src="@/assets/Icons/Face1.svg" class="w-12 h-12" />
+              <span class="text-gray-500 w-32 text-center dark:text-gray-400"
+                >Very Bad</span
+              >
+              <span class="text-xl font-bold text-gray-800 dark:text-white">
+                {{ data.totals?.very_bad }}
+              </span>
+            </div>
+            <div class="flex items-center justify-around">
+              <img src="@/assets/Icons/Face2.svg" class="w-12 h-12" />
+              <span class="text-gray-500 w-32 text-center dark:text-gray-400"
+                >Bad</span
+              >
+              <span
+                class="ml-2 text-xl font-bold text-gray-800 dark:text-white"
+              >
+                {{ data.totals?.bad }}
+              </span>
+            </div>
+            <div class="flex items-center justify-around">
+              <img src="@/assets/Icons/Face3.svg" class="w-12 h-12" />
+              <span class="text-gray-500 w-32 text-center dark:text-gray-400"
+                >Neutral</span
+              >
+              <span
+                class="ml-2 text-xl font-bold text-gray-800 dark:text-white"
+              >
+                {{ data.totals?.neutral }}
+              </span>
+            </div>
+            <div class="flex items-center justify-around">
+              <img src="@/assets/Icons/Face4.svg" class="w-12 h-12" />
+              <span class="text-gray-500 w-32 text-center dark:text-gray-400"
+                >Good</span
+              >
+              <span
+                class="ml-2 text-xl font-bold text-gray-800 dark:text-white"
+              >
+                {{ data.totals?.good }}
+              </span>
+            </div>
+            <div class="flex items-center justify-around">
+              <img src="@/assets/Icons/Face5.svg" class="w-12 h-12" />
+              <span class="text-gray-500 w-32 text-center dark:text-gray-400"
+                >Very Good</span
+              >
+              <span
+                class="ml-2 text-xl font-bold text-gray-800 dark:text-white"
+              >
+                {{ data.totals?.very_good }}
+              </span>
+            </div>
+            <div
+              class="flex items-center justify-around bg-gray-100 dark:bg-gray-700"
+            >
+              <div class="w-12 h-12 block"></div>
+              <span class="text-gray-500 w-32 text-center dark:text-white"
+                >TOTAL</span
+              >
+              <span
+                class="ml-2 text-xl font-bold text-gray-800 dark:text-white"
+              >
+                {{ data.checkins?.length }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
-        Everything
-      </h4>
-      <ul
-        class="mb-12 rounded-lg border border-gray-300 shadow-sm divide-y divide-gray-300 dark:border-gray-700 dark:divide-gray-700"
-      >
+      <div class="flex items-start justify-between">
+        <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-4">
+          Everything
+        </h4>
+        <div class="relative">
+          <button
+            type="button"
+            @click="state.showFilters = !state.showFilters"
+            class="inline-flex items-center py-2 px-3 w-full text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-emerald-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+          >
+            Filters
+            <svg
+              class="ml-2 w-4 h-4"
+              aria-hidden="true"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              ></path>
+            </svg>
+          </button>
+          <div
+            v-if="state.showFilters"
+            class="absolute mt-4 right-0 z-10 w-52 p-2 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700"
+          >
+            <div>
+              <label
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              >
+                # of Check Ins
+              </label>
+              <input
+                type="number"
+                v-model="state.limit"
+                class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500"
+                placeholder="Limit"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="mb-12 divide-y divide-gray-200 dark:divide-gray-600">
         <li
           v-for="ci of data.checkins"
           :key="ci.id"
           @click="
             $router.push({ name: 'read-check-in', params: { id: ci.id } })
           "
-          class="first:rounded-t-lg last:rounded-b-lg p-2.5 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+          class="p-2.5 hover:bg-gray-200 dark:hover:bg-gray-800 cursor-pointer"
         >
           <div class="flex items-center justify-between">
             <img
@@ -202,7 +417,13 @@ watch(route, async () => {
               class="w-14 h-14 flex-shrink-0"
             />
             <p class="text-gray-800 dark:text-white">
-              {{ new Date(ci.date).toLocaleDateString() }}
+              {{
+                new Date(ci.date).toLocaleDateString('en-US', {
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric'
+                })
+              }}
             </p>
             <p class="text-gray-800 dark:text-white">
               {{ JSON.parse(ci.symptoms).length }} Symptoms
@@ -213,6 +434,26 @@ watch(route, async () => {
           </div>
         </li>
       </ul>
+      <div class="flex flex-col items-center mb-12">
+        <p class="text-gray-700 dark:text-gray-300">
+          Page {{ state.page }} of {{ state.pages }}
+        </p>
+        <!-- Buttons -->
+        <div class="inline-flex mt-2 xs:mt-0">
+          <button
+            @click="prevPage"
+            class="py-2 px-4 text-sm font-medium text-white bg-gray-800 rounded-l hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          >
+            Prev
+          </button>
+          <button
+            @click="nextPage"
+            class="py-2 px-4 text-sm font-medium text-white bg-gray-800 rounded-r border-0 border-l border-gray-700 hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          >
+            Next
+          </button>
+        </div>
+      </div>
     </div>
   </template>
   <template v-if="$route.name === 'read-check-in'">
@@ -226,29 +467,45 @@ watch(route, async () => {
         class="inline-flex gap-5 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5 fill-current"
           viewBox="0 0 24 24"
           width="24"
           height="24"
+          stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="css-i6dzq1"
         >
-          <path fill="none" d="M0 0h24v24H0z" />
-          <path
-            d="M7.828 11H20v2H7.828l5.364 5.364-1.414 1.414L4 12l7.778-7.778 1.414 1.414z"
-          />
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
         BACK
       </button>
     </div>
     <LoaderComponent v-if="state.loading" />
     <div v-else>
-      <div class="flex flex-col divide-y divide-gray-200 dark:divide-y-gray-70">
+      <div class="flex flex-col divide-y divide-gray-200 dark:divide-gray-600">
         <div class="flex items-center gap-6 py-3">
           <label class="text-lg font-bold text-gray-800 dark:text-white"
             >Date</label
           >
           <p class="text-gray-800 dark:text-white">
-            {{ new Date(data.checkin?.date).toLocaleDateString() }}
+            {{
+              new Date(data.checkin?.date).toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                year: 'numeric',
+                day: 'numeric'
+              })
+            }}
+            at
+            {{
+              new Date(data.checkin?.date).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: 'numeric'
+              })
+            }}
           </p>
         </div>
         <div class="flex items-center gap-6 py-3">

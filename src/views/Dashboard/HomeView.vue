@@ -1,11 +1,11 @@
 <script setup>
+import BarChart from '@/components/BarChart.vue'
+import DoughnutChart from '@/components/DoughnutChart.vue'
+import LineChart from '@/components/LineChart.vue'
+import LoaderComponent from '@/components/LoaderComponent.vue'
 import useUserStore from '@/stores/user'
 import axios from 'axios'
 import { computed, onMounted, reactive } from 'vue'
-import LineChart from '@/components/LineChart.vue'
-import DoughnutChart from '@/components/DoughnutChart.vue'
-import BarChart from '@/components/BarChart.vue'
-import LoaderComponent from '@/components/LoaderComponent.vue'
 
 const userStore = useUserStore()
 
@@ -88,7 +88,7 @@ onMounted(async () => {
           data: ratings,
           backgroundColor: '#84cc16',
           borderColor: '#84cc16',
-          tension: 0.5,
+          tension: 0.33,
           pointRadius: 10,
           pointHoverRadius: 15
         }
@@ -108,8 +108,8 @@ onMounted(async () => {
           ticks: {
             stepSize: 1,
             color: document.documentElement.classList.contains('dark')
-              ? '#d4d4d8'
-              : '#374151'
+              ? '#E2E8F0'
+              : '#334155'
           },
           grid: {
             color: '#6b7280'
@@ -118,8 +118,8 @@ onMounted(async () => {
         x: {
           ticks: {
             color: document.documentElement.classList.contains('dark')
-              ? '#d4d4d8'
-              : '#374151'
+              ? '#E2E8F0'
+              : '#334155'
           },
           grid: {
             color: '#6b7280'
@@ -167,8 +167,8 @@ onMounted(async () => {
           },
           ticks: {
             color: document.documentElement.classList.contains('dark')
-              ? '#d4d4d8'
-              : '#374151'
+              ? '#E2E8F0'
+              : '#334155'
           }
         },
         y: {
@@ -179,8 +179,8 @@ onMounted(async () => {
           ticks: {
             stepSize: 1,
             color: document.documentElement.classList.contains('dark')
-              ? '#d4d4d8'
-              : '#374151'
+              ? '#E2E8F0'
+              : '#334155'
           }
         }
       }
@@ -230,22 +230,24 @@ const getScore = computed(() => {
         class="absolute top-6 right-6 p-2.5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
           viewBox="0 0 24 24"
-          stroke-width="1.5"
+          width="24"
+          height="24"
           stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
           class="w-6 h-6"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"
-          />
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
         </svg>
       </button>
     </div>
-    <!-- Text stats -->
+    <!-- Score -->
     <div
       class="relative h-full flex flex-col p-6 gap-6 shadow-lg bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
     >
@@ -256,7 +258,7 @@ const getScore = computed(() => {
       </h5>
 
       <div
-        class="relative w-52 h-52 mx-auto bg-lime-500 inline-flex items-center justify-center rounded-full p-4 shadow-md shadow-lime-400/40"
+        class="relative w-52 h-52 mx-auto bg-emerald-500 inline-flex items-center justify-center rounded-full p-4 shadow-md shadow-emerald-400/40"
       >
         <span
           class="absolute bg-white w-44 h-44 flex items-center justify-center rounded-full text-6xl font-bold dark:bg-gray-800"
@@ -272,18 +274,20 @@ const getScore = computed(() => {
         class="absolute top-6 right-6 p-2.5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
           viewBox="0 0 24 24"
-          stroke-width="1.5"
+          width="24"
+          height="24"
           stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
           class="w-6 h-6"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"
-          />
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
         </svg>
       </button>
     </div>
@@ -294,30 +298,34 @@ const getScore = computed(() => {
       <h5
         class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
       >
-        Check-Ins by Date
+        Your last 10 check-ins
       </h5>
       <LineChart
         v-if="!!charts.lineConfig"
         :chart-data="charts.lineConfig.data"
         :chart-options="charts.lineConfig.options"
+        :width="800"
+        :height="300"
       />
       <button
         type="button"
         class="absolute top-6 right-6 p-2.5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
           viewBox="0 0 24 24"
-          stroke-width="1.5"
+          width="24"
+          height="24"
           stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
           class="w-6 h-6"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"
-          />
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
         </svg>
       </button>
     </div>
@@ -328,7 +336,7 @@ const getScore = computed(() => {
       <h5
         class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
       >
-        Check-Ins by Totals
+        Sum of your ratings
       </h5>
       <BarChart
         v-if="!!charts.barConfig"
@@ -340,18 +348,20 @@ const getScore = computed(() => {
         class="absolute top-6 right-6 p-2.5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
       >
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
           viewBox="0 0 24 24"
-          stroke-width="1.5"
+          width="24"
+          height="24"
           stroke="currentColor"
+          stroke-width="2"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"
           class="w-6 h-6"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"
-          />
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
         </svg>
       </button>
     </div>

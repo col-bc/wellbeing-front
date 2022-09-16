@@ -7,7 +7,7 @@ import NavbarComponent from '../components/NavbarComponent.vue'
     <NavbarComponent />
     <main class="container max-w-screen-xl px-4 mx-auto">
       <div
-        class="flex flex-col md:flex-row items-center gap-12 md:gap-24 py-12 md:py-24"
+        class="flex flex-col md:flex-row items-start justify-around gap-12 py-12 md:py-24"
       >
         <img
           src="https://images.unsplash.com/photo-1422393682802-921122338109?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
@@ -29,7 +29,7 @@ import NavbarComponent from '../components/NavbarComponent.vue'
             <router-link
               to="/register"
               type="button"
-              class="w-full md:w-auto inline-flex items-center justify-center py-3 px-5 text-lg font-semibold text-center text-white bg-lime-700 rounded-lg hover:bg-lime-800 focus:ring-4 focus:outline-none focus:ring-lime-300 shadow-lg shadow-lime-700/30 dark:bg-lime-600 dark:hover:bg-lime-700 dark:focus:ring-lime-800"
+              class="w-full md:w-auto inline-flex items-center justify-center py-3 px-5 text-lg font-semibold text-center text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-emerald-300 shadow-lg shadow-emerald-700/30 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

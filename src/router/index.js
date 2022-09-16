@@ -29,7 +29,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/dashboard',
+      path: '/app',
       name: 'dashboard',
       component: () => import('@/views/Dashboard/IndexView.vue'),
       beforeEnter: (to, from, next) => {
@@ -37,7 +37,7 @@ const router = createRouter({
         if (!!userStore.isLoggedIn) {
           next()
         } else {
-          next('/login?next=/dashboard')
+          next('/login?next=/app')
         }
       },
       children: [
@@ -71,6 +71,11 @@ const router = createRouter({
           path: 'exercises/breath',
           name: 'exercises-breath',
           component: () => import('@/views/Exercises/BreathView.vue')
+        },
+        {
+          path: 'exercises/opposites',
+          name: 'exercises-opposites',
+          component: () => import('@/views/Exercises/OppositesView.vue')
         },
         {
           path: 'journal',

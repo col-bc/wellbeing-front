@@ -38,7 +38,7 @@ async function register() {
     if (!!loginReq.data.token) {
       // Save token and redirect to dashboard or ?next
       userStore.setToken(loginReq.data.token)
-      router.push(route.query.next || '/dashboard')
+      router.push(route.query.next || '/app')
     }
   } catch (error) {
     console.log(error)
@@ -57,26 +57,19 @@ async function register() {
         @submit.prevent="register()"
         class="flex max-w-lg flex-col gap-6 py-12 mx-auto"
       >
-        <a class="flex font-medium items-center text-white mb-4 md:mb-0">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-16 h-16 fill-gray-800 mx-auto p-2 bg-lime-300 rounded-full"
-            viewBox="0 0 24 24"
-            width="24"
-            height="24"
-          >
-            <path fill="none" d="M0 0H24V24H0z" />
-            <path
-              d="M11 2c4.068 0 7.426 3.036 7.934 6.965l2.25 3.539c.148.233.118.58-.225.728L19 14.07V17c0 1.105-.895 2-2 2h-1.999L15 22H6v-3.694c0-1.18-.436-2.297-1.244-3.305C3.657 13.631 3 11.892 3 10c0-4.418 3.582-8 8-8zm0 2c-3.314 0-6 2.686-6 6 0 1.385.468 2.693 1.316 3.75C7.41 15.114 8 16.667 8 18.306V20h5l.002-3H17v-4.248l1.55-.664-1.543-2.425-.057-.442C16.566 6.251 14.024 4 11 4zm-.53 3.763l.53.53.53-.53c.684-.684 1.792-.684 2.475 0 .684.683.684 1.791 0 2.474L11 13.243l-3.005-3.006c-.684-.683-.684-1.791 0-2.474.683-.684 1.791-.684 2.475 0z"
-            />
-          </svg>
-        </a>
+        <router-link
+          to="/"
+          class="flex font-medium items-center justify-center text-white mb-4 md:mb-0"
+        >
+          <img src="@/assets/logo.svg" class="w-24 h-24" alt="Logo" />
+        </router-link>
 
         <h2
           class="text-4xl font-black text-center text-gray-800 dark:text-white mb-4"
         >
           Login to your account
         </h2>
+        <!-- Alert -->
         <div
           v-if="!!form.error"
           class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
@@ -84,6 +77,7 @@ async function register() {
         >
           {{ form.error }}
         </div>
+        <!-- Email -->
         <div>
           <label
             for="email"
@@ -94,9 +88,10 @@ async function register() {
             type="email"
             id="email"
             v-model="form.email"
-            class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-lime-500 focus:border-lime-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-lime-500 dark:focus:border-lime-500"
+            class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500"
           />
         </div>
+        <!-- Password -->
         <div>
           <label
             for="password"
@@ -108,7 +103,7 @@ async function register() {
               :type="state.showPassword ? 'text' : 'password'"
               id="password"
               v-model="form.password"
-              class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-lime-500 focus:border-lime-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-lime-500 dark:focus:border-lime-500"
+              class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500"
             />
             <button
               type="button"
@@ -131,14 +126,13 @@ async function register() {
             </button>
           </div>
         </div>
-        <div
-          class="flex items-center pl-4 rounded-lg border border-gray-300 dark:border-gray-600"
-        >
+        <!-- Remember -->
+        <div class="flex items-center">
           <input
             id="remember"
             v-model="form.remember"
             type="checkbox"
-            class="w-4 h-4 text-lime-600 bg-gray-100 rounded border-gray-300 focus:ring-lime-500 dark:focus:ring-lime-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            class="w-4 h-4 text-emerald-600 bg-gray-100 rounded border-gray-300 focus:ring-emerald-500 dark:focus:ring-emerald-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
           />
           <label
             for="remember"
@@ -147,29 +141,25 @@ async function register() {
             Remember me on this device
           </label>
         </div>
-        <div
-          class="flex flex-col md:flex-row items-center justify-between gap-2"
+        <button
+          type="submit"
+          class="w-full text-white bg-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800"
         >
-          <button
-            type="submit"
-            class="w-full md:w-44 text-white bg-lime-700 hover:bg-lime-800 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-lime-600 dark:hover:bg-lime-700 dark:focus:ring-lime-800"
+          <LoaderComponent v-if="state.loading" />
+          <span v-else>Login</span>
+        </button>
+        <div class="flex items-center">
+          <router-link
+            to="/register"
+            class="block w-1/2 text-sm text-center text-cyan-600 hover:underline dark:text-cyan-400"
+            >I need an account</router-link
           >
-            <LoaderComponent v-if="state.loading" />
-            <span v-else>Login</span>
-          </button>
-          <div class="flex flex-col text-end gap-2">
-            <router-link
-              to="/register"
-              class="block text-sm text-cyan-600 hover:underline dark:text-cyan-400"
-              >I need an account</router-link
-            >
-            <a
-              href="#"
-              class="block text-sm text-cyan-600 hover:underline dark:text-cyan-400"
-            >
-              Forgot password?
-            </a>
-          </div>
+          <a
+            href="#"
+            class="block w-1/2 text-sm text-center text-cyan-600 hover:underline dark:text-cyan-400"
+          >
+            Forgot password?
+          </a>
         </div>
       </form>
     </main>

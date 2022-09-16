@@ -1,18 +1,7 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
-
-const directions = ref('Inhale')
+import { ref } from 'vue'
 const isRunning = ref(false)
 
-setInterval(() => {
-  directions.value = directions.value === 'Inhale' ? 'Exhale' : 'Inhale'
-}, 4000)
-
-watch(isRunning, (val) => {
-  if (val) {
-    directions.value = 'Inhale'
-  }
-})
 </script>
 <template>
   <div class="flex flex-col w-full h-full">
@@ -21,8 +10,8 @@ watch(isRunning, (val) => {
     >
       Diaphragmatic Breathing
     </h1>
-    <p v-if="isRunning" class="text-gray-500 text-lg text-center font-semibold">
-      {{ directions }}
+    <p v-if="!isRunning" class="text-gray-700 text-lg text-center font-medium dark:text-gray-300">
+      Breath in through your nose as the circle expands and out though your mouth as it contracts. Continue for as long as you like. <span class="font-bold">Click Start to begin </span>
     </p>
     <div class="flex-1 flex items-center justify-center">
       <div v-if="isRunning" class="watch-face">

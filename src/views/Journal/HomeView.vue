@@ -27,6 +27,7 @@ onMounted(async () => {
     }
     for (const page of data.pages) {
       page.expanded = false
+      page.showDropdown = false
     }
     data.pages.reverse()
   } catch (error) {
@@ -46,19 +47,24 @@ onMounted(async () => {
     </h2>
     <router-link
       :to="{ name: 'journal-create' }"
-      class="inline-flex items-center py-3 px-5 text-base font-medium text-center text-white bg-lime-700 rounded-lg hover:bg-lime-800 focus:ring-4 focus:outline-none focus:ring-lime-300 dark:bg-lime-600 dark:hover:bg-lime-700 dark:focus:ring-lime-800"
+      class="inline-flex items-center py-3 px-5 text-base font-medium text-center text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-emerald-300 dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="w-6 h-6 mr-2 fill-current"
-        viewBox="0 0 24 24"
+        class="h-6 w-6 mr-2"
         width="24"
         height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       >
-        <path fill="none" d="M0 0h24v24H0z" />
-        <path
-          d="M15 4H5v16h14V8h-4V4zM3 2.992C3 2.444 3.447 2 3.999 2H16l5 5v13.993A1 1 0 0 1 20.007 22H3.993A1 1 0 0 1 3 21.008V2.992zM11 11V8h2v3h3v2h-3v3h-2v-3H8v-2h3z"
-        />
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="12" y1="18" x2="12" y2="12" />
+        <line x1="9" y1="15" x2="15" y2="15" />
       </svg>
       Add new page
     </router-link>
@@ -75,9 +81,7 @@ onMounted(async () => {
       </p>
     </div>
     <!-- Pages -->
-    <ul
-      class="mb-12 rounded-lg border border-gray-300 shadow-sm divide-y divide-gray-300 dark:border-gray-700 dark:divide-gray-700"
-    >
+    <ul class="divide-y divide-gray-200 dark:divide-gray-600">
       <li
         v-for="page of data.pages"
         :key="page.id"
@@ -86,30 +90,99 @@ onMounted(async () => {
             ? (state.expandedId = null)
             : (state.expandedId = page.id)
         "
-        class="flex flex-col first:rounded-t-lg last:rounded-b-lg p-2.5 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+        class="p-2.5 hover:bg-gray-200 dark:hover:bg-gray-800 cursor-pointer"
+        :class="{
+          'bg-gray-200 dark:bg-gray-800': state.expandedId === page.id
+        }"
       >
         <div class="w-full flex items-center justify-between">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="w-6 h-6 mr-4 text-current"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
           <h5 class="text-lg font-medium text-gray-800 dark:text-white">
             {{ new Date(page.date).toLocaleDateString() }}
           </h5>
           <p class="flex-1 text-center">
             {{ page.body.split(' ').length }} words
           </p>
+          <div class="relative">
+            <button
+              type="button"
+              @click.stop="page.showDropdown = !page.showDropdown"
+              class="p-3 rounded-full text-gray-900 bg-transparent hover:bg-black hover:bg-opacity-10 dark:text-white"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="css-i6dzq1"
+              >
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+              </svg>
+            </button>
+            <div
+              v-show="page.showDropdown"
+              @click.stop
+              class="absolute right-0 z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700"
+            >
+              <ul
+                class="py-1 text-sm text-gray-700 dark:text-gray-200"
+                aria-labelledby="dropdownDefault"
+              >
+                <li>
+                  <a
+                    href="#"
+                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >Edit page</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >Add to favorites</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >Delete page</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
         <div
           v-if="state.expandedId === page.id"
-          class="border-t border-gray-300 dark:border-gray-700 mt-2.5 p-2.5"
+          class="border-t border-gray-300 dark:border-gray-700 p-4"
         >
-          <p class="text-gray-600 dark:text-gray-400">
-            {{ page.body }}
-          </p>
-          <button
-            type="button"
-            @click.stop
-            class="mt-4 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
-          >
-            Edit
-          </button>
+          <p class="mt-4 text-gray-800 dark:text-white" v-html="page.body"></p>
         </div>
       </li>
     </ul>

@@ -1,8 +1,10 @@
 <script setup>
-import { reactive } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import useUserStore from '../../stores/user'
+import { current } from 'tailwindcss/colors'
+import RatingComponent from '../../components/RatingComponent.vue'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -10,10 +12,17 @@ const router = useRouter()
 const form = reactive({
   error: null,
   rating: null,
-  date: new Date().toISOString().substring(0, 10),
+  date: null,
   notes: null,
   symptoms: null,
   activities: null
+})
+const state = reactive({
+  complete: true
+})
+onMounted(() => {
+  state.complete = false
+  form.date = currentDateTimeString.value
 })
 async function addCheckIn() {
   form.error = null
@@ -46,19 +55,26 @@ async function addCheckIn() {
     )
     if (!!resp.data) {
       userStore.addCheckIn(resp.data)
-      router.push('/dashboard')
+      state.complete = true
     }
   } catch (error) {
     console.log(error)
     form.error = error.response.data.error
   }
 }
+const currentDateTimeString = computed(() => {
+  const now = new Date()
+  const date = now.toISOString().substring(0, 10)
+  const time = now.toLocaleTimeString('en-US', { hour12: false }).slice(0, 5)
+  return date + 'T' + time
+})
 </script>
 
 <template>
   <form
+    v-if="!state.complete"
     @submit.prevent="addCheckIn"
-    class="max-w-lg mx-auto flex flex-col gap-6"
+    class="max-w-lg mx-auto flex flex-col gap-6 mb-12"
   >
     <h2 class="text-3xl font-black text-gray-800 mb-6 dark:text-white">
       How are you feeling right now?
@@ -70,154 +86,51 @@ async function addCheckIn() {
     >
       <span class="font-medium">{{ form.error }}</span>
     </div>
-    <div>
-      <label
-        for="email"
-        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >Rating</label
-      >
-      <div class="flex items-center">
-        <div>
-          <input
-            type="radio"
-            v-model="form.rating"
-            id="rating-1"
-            name="rating"
-            value="1"
-            class="hidden peer"
-          />
-          <label
-            for="rating-1"
-            class="transition duration ease-linear inline-flex justify-between items-center p-1.5 w-full bg-white rounded-l-lg border border-gray-300 cursor-pointer dark:border-gray-700 hover:bg-indigo-600 peer-checked:bg-indigo-600 dark:peer-checked:text-lime-500 peer-checked:border-4 peer-checked:border-lime-600 peer-checked:text-lime-600 dark:bg-gray-800 dark:hover:bg-indigo-800 dark:peer-checked:bg-indigo-800"
-          >
-            <img
-              src="@/assets/icons/Face1.svg"
-              alt="Face 1"
-              class="w-24 h-24 flex-shrink-0"
-            />
-          </label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            v-model="form.rating"
-            id="rating-2"
-            name="rating"
-            value="2"
-            class="hidden peer"
-          />
-          <label
-            for="rating-2"
-            class="transition duration ease-linear inline-flex justify-between items-center p-1.5 w-full bg-white border border-gray-300 cursor-pointer dark:border-gray-700 hover:bg-purple-400 peer-checked:bg-purple-400 dark:peer-checked:text-lime-500 peer-checked:border-4 peer-checked:border-lime-600 peer-checked:text-lime-600 dark:bg-gray-800 dark:hover:bg-purple-600 dark:peer-checked:bg-purple-600"
-          >
-            <img
-              src="@/assets/icons/Face2.svg"
-              alt="Face 2"
-              class="w-24 h-24 flex-shrink-0"
-            />
-          </label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            v-model="form.rating"
-            id="rating-3"
-            name="rating"
-            value="3"
-            class="hidden peer"
-          />
-          <label
-            for="rating-3"
-            class="transition duration ease-linear inline-flex justify-between items-center p-1.5 w-full bg-white border border-gray-300 cursor-pointer dark:border-gray-700 hover:bg-orange-400 peer-checked:bg-orange-400 dark:peer-checked:text-lime-500 peer-checked:border-4 peer-checked:border-lime-600 peer-checked:text-lime-600 dark:bg-gray-800 dark:hover:bg-orange-400 dark:peer-checked:bg-orange-400"
-          >
-            <img
-              src="@/assets/icons/Face3.svg"
-              alt="Face 3"
-              class="w-24 h-24 flex-shrink-0"
-            />
-          </label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            v-model="form.rating"
-            id="rating-4"
-            name="rating"
-            value="4"
-            class="hidden peer"
-          />
-          <label
-            for="rating-4"
-            class="transition duration ease-linear inline-flex justify-between items-center p-1.5 w-full bg-white border border-gray-300 cursor-pointer dark:border-gray-700 hover:bg-cyan-400 peer-checked:bg-cyan-400 dark:peer-checked:text-lime-500 peer-checked:border-4 peer-checked:border-lime-600 peer-checked:text-lime-600 dark:bg-gray-800 dark:hover:bg-cyan-400 dark:peer-checked:bg-cyan-400"
-          >
-            <img
-              src="@/assets/icons/Face4.svg"
-              alt="Face 4"
-              class="w-24 h-24 flex-shrink-0"
-            />
-          </label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            v-model="form.rating"
-            id="rating-5"
-            name="rating"
-            value="5"
-            class="hidden peer"
-          />
-          <label
-            for="rating-5"
-            class="transition duration ease-linear inline-flex justify-between items-center p-1.5 w-full bg-white rounded-r-lg border border-gray-300 cursor-pointer dark:border-gray-700 hover:bg-emerald-400 peer-checked:bg-cyan-400 dark:peer-checked:text-lime-500 peer-checked:border-4 peer-checked:border-lime-600 peer-checked:text-lime-600 dark:bg-gray-800 dark:hover:bg-emerald-400 dark:peer-checked:bg-emerald-400"
-          >
-            <img
-              src="@/assets/icons/Face5.svg"
-              alt="Face 5"
-              class="w-24 h-24 flex-shrink-0"
-            />
-          </label>
-        </div>
-      </div>
-    </div>
+    <!-- Rating -->
+    <RatingComponent @update="(rating) => (form.rating = rating)" />
+    <!-- Date/time -->
     <div>
       <label
         for="date"
         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >Date</label
+        >Date and time</label
       >
       <input
-        type="date"
+        type="datetime-local"
         id="date"
         v-model="form.date"
-        class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-lime-500 focus:border-lime-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-lime-500 dark:focus:border-lime-500"
+        class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500"
       />
     </div>
+    <!-- Activities -->
     <div>
       <label
         for="activities"
         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >Activities</label
+        >What have you been doing?</label
       >
       <input
         type="text"
         id="activities"
         v-model="form.activities"
-        class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-lime-500 focus:border-lime-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-lime-500 dark:focus:border-lime-500"
+        class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500"
       />
     </div>
+    <!-- Symptoms -->
     <div>
       <label
         for="symptoms"
         class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >Symptoms</label
+        >What symptoms have you experienced?</label
       >
       <input
         type="text"
         id="symptoms"
         v-model="form.symptoms"
-        class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-lime-500 focus:border-lime-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-lime-500 dark:focus:border-lime-500"
+        class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500"
       />
     </div>
+    <!-- Notes -->
     <div>
       <label
         for="notes"
@@ -227,17 +140,41 @@ async function addCheckIn() {
       <textarea
         id="notes"
         v-model="form.notes"
-        class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-lime-500 focus:border-lime-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-lime-500 dark:focus:border-lime-500"
+        class="bg-transparent border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-emerald-500 dark:focus:border-emerald-500"
         rows="4"
       ></textarea>
     </div>
-    <div>
-      <button
-        type="submit"
-        class="text-white bg-lime-700 hover:bg-lime-800 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-lime-600 dark:hover:bg-lime-700 dark:focus:ring-lime-800"
+    <button
+      type="submit"
+      class="mt-4 text-white bg-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800"
+    >
+      Finish
+    </button>
+  </form>
+  <div
+    v-if="state.complete"
+    class="w-full h-full flex items-center justify-center"
+  >
+    <div class="text-center space-y-6">
+      <h2 class="text-3xl font-black text-gray-800 mb-6 dark:text-white">
+        Thank you!
+      </h2>
+      <p class="text-gray-800 dark:text-gray-300">
+        Your check-in has been recorded.
+      </p>
+      <router-link
+        to="/app"
+        class="inline-block text-white bg-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:ring-emerald-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-4 dark:bg-emerald-600 dark:hover:bg-emerald-700 focus:outline-none dark:focus:ring-emerald-800"
       >
-        Submit
+        Return to Dashboard
+      </router-link>
+      <button
+        type="button"
+        @click="state.complete = false"
+        class="py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+      >
+        Start a new check-in
       </button>
     </div>
-  </form>
+  </div>
 </template>

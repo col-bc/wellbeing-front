@@ -47,18 +47,7 @@ watch(state, (value) => {
       class="relative z-20 container max-w-screen-xl flex flex-wrap justify-between items-center mx-auto"
     >
       <router-link to="/" class="flex items-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="mr-3 fill-current w-8 h-8"
-          viewBox="0 0 24 24"
-          width="24"
-          height="24"
-        >
-          <path fill="none" d="M0 0H24V24H0z" />
-          <path
-            d="M11 2c4.068 0 7.426 3.036 7.934 6.965l2.25 3.539c.148.233.118.58-.225.728L19 14.07V17c0 1.105-.895 2-2 2h-1.999L15 22H6v-3.694c0-1.18-.436-2.297-1.244-3.305C3.657 13.631 3 11.892 3 10c0-4.418 3.582-8 8-8zm0 2c-3.314 0-6 2.686-6 6 0 1.385.468 2.693 1.316 3.75C7.41 15.114 8 16.667 8 18.306V20h5l.002-3H17v-4.248l1.55-.664-1.543-2.425-.057-.442C16.566 6.251 14.024 4 11 4zm-.53 3.763l.53.53.53-.53c.684-.684 1.792-.684 2.475 0 .684.683.684 1.791 0 2.474L11 13.243l-3.005-3.006c-.684-.683-.684-1.791 0-2.474.683-.684 1.791-.684 2.475 0z"
-          />
-        </svg>
+        <img src="@/assets/logo.svg" class="mr-3 w-12 h-12" alt="Logo" />
         <span
           class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
           >Wellbeing</span
@@ -100,9 +89,9 @@ watch(state, (value) => {
         </button>
         <!-- CTA button -->
         <router-link
-          to="/dashboard"
+          to="/app"
           type="button"
-          class="inline-flex items-center gap-2.5 text-white bg-lime-700 hover:bg-lime-800 focus:ring-4 focus:outline-none focus:ring-lime-300 font-medium rounded-lg px-3 py:1.5 md:px-5 py-2.5 text-center text-sm dark:bg-lime-600 dark:hover:bg-lime-700 dark:focus:ring-lime-800"
+          class="inline-flex items-center gap-2.5 text-white bg-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-emerald-300 font-medium rounded-lg px-3 py:1.5 md:px-5 py-2.5 text-center text-sm dark:bg-emerald-600 dark:hover:bg-emerald-700 dark:focus:ring-emerald-800"
         >
           My Dashboard
         </router-link>
@@ -154,37 +143,37 @@ watch(state, (value) => {
                 class="block py-2 px-3"
                 :class="[
                   $route.path === '/'
-                    ? 'text-white bg-lime-700 rounded md:bg-transparent md:text-lime-700 md:p-0 md:dark:text-lime-400'
-                    : 'text-gray-700  hover:bg-gray-200 rounded md:hover:bg-transparent md:hover:text-lime-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700'
+                    ? 'text-white bg-emerald-700 rounded md:bg-transparent md:text-emerald-700 md:p-0 md:dark:text-emerald-400'
+                    : 'text-gray-700  hover:bg-gray-200 rounded md:hover:bg-transparent md:hover:text-emerald-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700'
                 ]"
                 >Home</router-link
               >
             </li>
             <li>
               <router-link
-                to="/dashboard"
-                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-lime-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                to="/app"
+                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-emerald-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 >Dashboard</router-link
               >
             </li>
             <li>
               <router-link
-                to="/dashboard/journal"
-                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-lime-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                to="/app/journal"
+                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-emerald-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 >Journal</router-link
               >
             </li>
             <li>
               <a
                 href="#"
-                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-lime-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-emerald-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 >Resources</a
               >
             </li>
             <li>
               <a
                 href="#"
-                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-lime-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                class="block py-2 pr-4 pl-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-emerald-700 md:p-0 md:dark:hover:text-white dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                 >Blog</a
               >
             </li>
@@ -203,7 +192,7 @@ watch(state, (value) => {
                     class="sr-only peer"
                   />
                   <div
-                    class="w-11 h-6 bg-gray-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-lime-300 dark:peer-focus:ring-lime-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-lime-600"
+                    class="w-11 h-6 bg-gray-500 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 dark:peer-focus:ring-emerald-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-emerald-600"
                   ></div>
                 </label>
               </div>
@@ -214,15 +203,3 @@ watch(state, (value) => {
     </div>
   </nav>
 </template>
-
-<style scoped>
-.v-enter-active,
-.v-leave-active {
-  transition: all 0.35s ease-in-out;
-}
-
-.v-enter-from,
-.v-leave-to {
-  transform: translateY(-100%);
-}
-</style>
